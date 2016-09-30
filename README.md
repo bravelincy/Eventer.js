@@ -33,6 +33,18 @@ Eventer.one('login', function() {
 });
 ```
 
+取消订阅所有事件
+``` javascript
+Eventer.offAll();
+```
+
+发布所有事件
+``` javascript
+Eventer.fireAll({
+    data: []
+});
+```
+
 ## 高级用法
 
 传入一个事件列表对象

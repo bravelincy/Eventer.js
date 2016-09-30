@@ -7,17 +7,29 @@
             return value !== null && typeof value === 'object';
         },
 
+        isString = function(value) {
+            return typeof value === 'string';
+        },
+
+        isFunction = function(value) {
+            return typeof value === 'function';
+        },
+
+        createMap = function() {
+            return Object.create(null);
+        },
+
         each = function(obj, iterator, context) {
             for (var key in obj) {
                 iterator.call(context, key, obj[key]);
             }
         },
 
-        slice = function(arrayLike) {
-            return [].slice.call(arrayLike);
+        slice = function(arrayLike, index) {
+            return [].slice.call(arrayLike, index);
         };
 
-    var commonAPI = {
+    var rawAPI = {
         on: function(evtName, handler, isOnce) {
             var handlers = this._listeners[evtName],
                 that = this,
@@ -33,7 +45,7 @@
                 });
 
                 !isAlreadyOn && handlers.push(handlerItem);
-            } else {
+            } else if (isFunction(handler)) {
                 this._listeners[evtName] = [handlerItem];
             }
         },
@@ -88,16 +100,27 @@
     };
 
     function Eventer() {
-        this._listeners = {};
-
+        this._listeners = createMap();
         if (arguments.length) {
             this.on.apply(this, arguments);
         }
     }
 
-    each(commonAPI, function(apiName, fn) {
-        this[apiName] = function(names, handlerOrData) {
-            var args = slice(arguments),
+    Eventer.prototype = {
+        offAll: function() {
+            this._listeners = createMap();
+        },
+
+        fireAll: function(data) {
+            each(this._listeners, function(evtName) {
+                this.fire(evtName, data);
+            }, this);
+        }
+    };
+
+    each(rawAPI, function(apiName, fn) {
+        this[apiName] = function(names) {
+            var extraArgs = slice(arguments, 1),
                 that = this,
                 evtsMap;
 
@@ -105,24 +128,23 @@
                 evtsMap = names;
                 each(evtsMap, function(key, value) {
                     names = key;
-                    handlerOrData = value;
-                    splitNames(args.slice(1));
+                    splitNames([value].concat(extraArgs));
                 });
-            } else {
-                splitNames(args.slice(2));
+            } else if (isString(names)) {
+                splitNames(extraArgs);
             }
 
             function splitNames(extraArgs) {
                 names.split(' ').forEach(function(evtName) {
-                    var applyArgs = [evtName, handlerOrData];
-                    fn.apply(that, applyArgs.concat(extraArgs));
+                    var applyArgs = [evtName].concat(extraArgs);
+                    fn.apply(that, applyArgs);
                 });
             }
         };
     }, Eventer.prototype);
 
     // for static usage
-    Eventer._listeners = {};
+    Eventer._listeners = createMap();
     each(Eventer.prototype, function(apiName, fn) {
         this[apiName] = fn;
     }, Eventer);
