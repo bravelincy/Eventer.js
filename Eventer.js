@@ -33,7 +33,7 @@
                 });
 
                 !isAlreadyOn && handlers.push(handlerItem);
-            } else{
+            } else {
                 this._listeners[evtName] = [handlerItem];
             }
         },
