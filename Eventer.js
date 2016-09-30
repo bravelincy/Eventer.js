@@ -7,9 +7,9 @@
             return value !== null && typeof value === 'object';
         },
 
-        each = function(obj, iterator) {
+        each = function(obj, iterator, context) {
             for (var key in obj) {
-                iterator(key, obj[key]);
+                iterator.call(context, key, obj[key]);
             }
         },
 
@@ -87,7 +87,7 @@
         }
     };
 
-    function Observer() {
+    function Eventer() {
         this._listeners = {};
 
         if (arguments.length) {
@@ -95,9 +95,8 @@
         }
     }
 
-    Observer.prototype = {};
     each(commonAPI, function(apiName, fn) {
-        Observer.prototype[apiName] = function(names, handlerOrData) {
+        this[apiName] = function(names, handlerOrData) {
             var args = slice(arguments),
                 that = this,
                 evtsMap;
@@ -120,13 +119,13 @@
                 });
             }
         };
-    })
+    }, Eventer.prototype);
 
     // for static usage
-    Observer._listeners = {};
-    each(Observer.prototype, function(apiName, fn) {
-        Observer[apiName] = fn;
-    });
+    Eventer._listeners = {};
+    each(Eventer.prototype, function(apiName, fn) {
+        this[apiName] = fn;
+    }, Eventer);
 
-    window.Observer = Observer;
+    window.Eventer = Eventer;
 })(window);

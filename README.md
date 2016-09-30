@@ -1,4 +1,4 @@
-# Javascript事件系统
+# Javascript事件订阅发布系统
 > 这是一个基于观察者模式实现的可以订阅、取消订阅和发布事件的系统。
 
 ## 基本用法
@@ -7,27 +7,27 @@
 ``` javascript
 function onLogin(event) {
     var user = event.data;
-    // do someting
+    // do something
 }
 
-Observer.on('login', onLogin);
+Eventer.on('login', onLogin);
 ```
 
 发布一个事件
 ``` javascript
-Observer.fire('login', {
+Eventer.fire('login', {
     username: 'joenil'
 });
 ```
 
 取消订阅一个事件
 ``` javascript
-Observer.off('login', onLogin);
+Eventer.off('login', onLogin);
 ```
 
 订阅一次性有效的事件
 ``` javascript
-Observer.one('login', function() {
+Eventer.one('login', function() {
     // do something
 });
 ```
@@ -36,7 +36,7 @@ Observer.one('login', function() {
 
 传入一个事件列表对象
 ``` javascript
-Observer.on({
+Eventer.on({
     ready: function() {
         // do something
     },
@@ -48,14 +48,14 @@ Observer.on({
 
 订阅多个事件使用同一个事件处理程序
 ``` javascript
-Observer.on('ready login', function(event) {
+Eventer.on('ready login', function(event) {
     console.log(event.type);
 });
 ```
 
 可以将上述两种方式结合
 ``` javascript
-Observer.on({
+Eventer.on({
     'ready login': function() {
         // do something
     },
@@ -68,19 +68,19 @@ Observer.on({
 取消订阅和发布事件也可以这么用
 ``` javascript
 // subscribe a group listenrs
-Observer.off('ready login', foo);
+Eventer.off('ready login', foo);
 
-Observer.off({
+Eventer.off({
     ready: foo,
     login: bar
 });
 
 // fire a group listeners
-Observer.fire('ready login', {
+Eventer.fire('ready login', {
     username: 'joenil'
 });
 
-Observer.fire({
+Eventer.fire({
     login: {
         username: 'joenil'
     },
@@ -91,20 +91,20 @@ Observer.fire({
 ```
 
 ## 事件实例
-使用Observer静态方法操作的事件数据都是共享的，有时候需要将事件独立出来，可以使用生成实例的方式
+使用Eventer静态方法操作的事件数据都是共享的，有时候需要将事件独立出来，可以使用生成实例的方式
 ``` javascript
-var myObserver = new Observer();
-myObserver.on('login', function() {
+var myEventer = new Eventer();
+myEventer.on('login', function() {
     // do something
 });
 
-var otherObserver = new Observer({
+var otherEventer = new Eventer({
     login: function() {
         // do something
     }
 });
 
 // only fire their own listener
-myObserver.fire('login');
-otherObserver.fire('login');
+myEventer.fire('login');
+otherEventer.fire('login');
 ```
