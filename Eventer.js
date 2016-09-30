@@ -32,7 +32,6 @@
     var rawAPI = {
         on: function(evtName, handler, isOnce) {
             var handlers = this._listeners[evtName],
-                that = this,
                 isAlreadyOn = false,
                 handlerItem = {
                     handler: handler,
@@ -45,7 +44,7 @@
                 });
 
                 !isAlreadyOn && handlers.push(handlerItem);
-            } else if (isFunction(handler)) {
+            } else {
                 this._listeners[evtName] = [handlerItem];
             }
         },
@@ -61,8 +60,7 @@
                 that = this,
                 index;
 
-            if (!handlers) return;
-            if (handler) {
+            if (handler && isArray(handlers)) {
                 index = handlers.findIndex(function(item) {
                     return item.handler === handler;
                 });
@@ -86,10 +84,12 @@
 
             if (handlers) {
                 handlers.forEach(function(item) {
-                    item.handler.call(this, {
+                    var $event = {
                         type: evtName,
                         data: data
-                    });
+                    };
+
+                    isFunction(item.handler) && item.handler.call(this, $event);
 
                     if (item.isOnce) {
                         that.off(evtName, item.handler);
@@ -118,8 +118,9 @@
         }
     };
 
+    // more sugary
     each(rawAPI, function(apiName, fn) {
-        this[apiName] = function(names) {
+        Eventer.prototype[apiName] = function(names) {
             var extraArgs = slice(arguments, 1),
                 that = this,
                 evtsMap;
@@ -141,13 +142,13 @@
                 });
             }
         };
-    }, Eventer.prototype);
+    });
 
     // for static usage
     Eventer._listeners = createMap();
     each(Eventer.prototype, function(apiName, fn) {
-        this[apiName] = fn;
-    }, Eventer);
+        Eventer[apiName] = fn;
+    });
 
     window.Eventer = Eventer;
 })(window);
