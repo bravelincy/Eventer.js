@@ -1,4 +1,5 @@
 # Javascript事件订阅发布系统
+![logo](https://cloud.githubusercontent.com/assets/11400674/18984575/f9d3034a-8725-11e6-8099-190535d15afb.png)
 > 这是一个基于观察者模式实现的可以订阅、取消订阅和发布事件的系统。
 
 ## 基本用法
