@@ -100,11 +100,11 @@
         Observer.prototype[apiName] = function(names, handlerOrData) {
             var args = slice(arguments),
                 that = this,
-                paramsMap;
+                evtsMap;
 
             if (isObject(names)) {
-                paramsMap = names;
-                each(paramsMap, function(key, value) {
+                evtsMap = names;
+                each(evtsMap, function(key, value) {
                     names = key;
                     handlerOrData = value;
                     splitNames(args.slice(1));
