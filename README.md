@@ -10,7 +10,7 @@ function onLogin(event) {
     // do someting
 }
 
-Observer.on('login', onReady);
+Observer.on('login', onLogin);
 ```
 
 发布一个事件
@@ -22,12 +22,12 @@ Observer.fire('login', {
 
 取消订阅一个事件
 ``` javascript
-Observer.off('login', onReady);
+Observer.off('login', onLogin);
 ```
 
 订阅一次性有效的事件
 ``` javascript
-Observer.one('ready', function() {
+Observer.one('login', function() {
     // do something
 });
 ```
