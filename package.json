@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --compilers js:babel-register",
     "dist": "rollup -c",
-    "start": "npm run dist && NODE_ENV=production npm run dist"
+    "start": "npm run dist & NODE_ENV=production npm run dist"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "babel-cli": "^6.16.0",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-es2015-rollup": "^1.2.0",
+    "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "eslint": "^3.7.0",
     "mocha": "^3.1.0",

@@ -1,4 +1,4 @@
-import Eventer from './Eventer';
+import Eventer from './eventer';
 import 'window';
 
 this.Eventer = Eventer;

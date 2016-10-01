@@ -11,7 +11,7 @@ let rawAPI = {
 
         if (handlers) {
             isAlreadyOn = handlers.some(
-                item => item.handler === handlerItem.handle
+                item => item.handler === handlerItem.handler
             );
             !isAlreadyOn && handlers.push(handlerItem);
         } else {

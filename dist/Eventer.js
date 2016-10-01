@@ -44,7 +44,7 @@
 
             if (handlers) {
                 isAlreadyOn = handlers.some(
-                    function (item) { return item.handler === handlerItem.handle; }
+                    function (item) { return item.handler === handlerItem.handler; }
                 );
                 !isAlreadyOn && handlers.push(handlerItem);
             } else {
