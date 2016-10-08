@@ -1,6 +1,29 @@
 import {isArray, isObject, isString, isFunction, createMap, each, slice} from './util';
 
-let rawAPI = {
+// constructor
+function Eventer() {
+    this._listeners = createMap();
+    if (arguments.length) {
+        this.on.apply(this, arguments);
+    }
+}
+
+// for static usage
+Eventer._listeners = createMap();
+
+let baseMethods = {
+    offAll() {
+        this._listeners = createMap();
+    },
+
+    fireAll(data) {
+        each(this._listeners, evtName => {
+            this.fire(evtName, data);
+        });
+    }
+};
+
+let rawMethods = {
     on(evtName, handler, isOnce) {
         var handlers = this._listeners[evtName],
             isAlreadyOn = false,
@@ -66,28 +89,9 @@ let rawAPI = {
     }
 };
 
-function Eventer() {
-    this._listeners = createMap();
-    if (arguments.length) {
-        this.on.apply(this, arguments);
-    }
-}
-
-Eventer.prototype = {
-    offAll() {
-        this._listeners = createMap();
-    },
-
-    fireAll(data) {
-        each(this._listeners, evtName => {
-            this.fire(evtName, data);
-        });
-    }
-};
-
 // more sugary
-each(rawAPI, (apiName, fn) => {
-    Eventer.prototype[apiName] = function(names) {
+each(rawMethods, (fnName, fn) => {
+    baseMethods[fnName] = function(names) {
         let evtsMap,
             extraArgs = slice(arguments, 1),
             splitNames = extraArgs => {
@@ -109,10 +113,10 @@ each(rawAPI, (apiName, fn) => {
     };
 });
 
-// for static usage
-Eventer._listeners = createMap();
-each(Eventer.prototype, (apiName, fn) => {
-    Eventer[apiName] = fn;
+// extend prototype and constructor
+each(baseMethods, (fnName, fn) => {
+    Eventer.prototype[fnName] = fn;
+    Eventer[fnName] = fn;
 });
 
 export default Eventer;

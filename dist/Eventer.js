@@ -33,7 +33,32 @@
         return [].slice.call(arrayLike, index);
     }
 
-    var rawAPI = {
+    // constructor
+    function Eventer() {
+        this._listeners = createMap();
+        if (arguments.length) {
+            this.on.apply(this, arguments);
+        }
+    }
+
+    // for static usage
+    Eventer._listeners = createMap();
+
+    var baseMethods = {
+        offAll: function offAll() {
+            this._listeners = createMap();
+        },
+
+        fireAll: function fireAll(data) {
+            var this$1 = this;
+
+            each(this._listeners, function (evtName) {
+                this$1.fire(evtName, data);
+            });
+        }
+    };
+
+    var rawMethods = {
         on: function on(evtName, handler, isOnce) {
             var handlers = this._listeners[evtName],
                 isAlreadyOn = false,
@@ -103,30 +128,9 @@
         }
     };
 
-    function Eventer() {
-        this._listeners = createMap();
-        if (arguments.length) {
-            this.on.apply(this, arguments);
-        }
-    }
-
-    Eventer.prototype = {
-        offAll: function offAll() {
-            this._listeners = createMap();
-        },
-
-        fireAll: function fireAll(data) {
-            var this$1 = this;
-
-            each(this._listeners, function (evtName) {
-                this$1.fire(evtName, data);
-            });
-        }
-    };
-
     // more sugary
-    each(rawAPI, function (apiName, fn) {
-        Eventer.prototype[apiName] = function(names) {
+    each(rawMethods, function (fnName, fn) {
+        baseMethods[fnName] = function(names) {
             var this$1 = this;
 
             var evtsMap,
@@ -150,10 +154,10 @@
         };
     });
 
-    // for static usage
-    Eventer._listeners = createMap();
-    each(Eventer.prototype, function (apiName, fn) {
-        Eventer[apiName] = fn;
+    // extend prototype and constructor
+    each(baseMethods, function (fnName, fn) {
+        Eventer.prototype[fnName] = fn;
+        Eventer[fnName] = fn;
     });
 
     window.Eventer = Eventer;
